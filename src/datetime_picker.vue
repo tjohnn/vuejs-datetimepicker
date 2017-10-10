@@ -229,7 +229,7 @@ export default {
           if (this.period === 'AM') {
             h = '00'
           } else {
-            h = '00'
+            h = '12'
           }
         } else if (this.period === 'PM') {
           h = parseInt(h) + 12
