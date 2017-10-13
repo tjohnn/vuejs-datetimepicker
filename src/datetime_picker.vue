@@ -253,9 +253,12 @@ export default {
     this.year = this.timeStamp.getFullYear()
     this.monthIndex = this.timeStamp.getMonth()
     this.day = this.timeStamp.getDate()
+    this.hour = this.timeStamp.getHours()
+    this.minute = this.timeStamp.getMinutes()
     this.updateCalendar()
     document.addEventListener('keydown', this.keyIsDown)
     document.addEventListener('click', this.documentClicked)
+    this.setDate()
   },
   destroyed: function () {
     document.removeEventListener('keydown', this.keyIsDown)
