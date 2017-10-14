@@ -2,18 +2,18 @@
   <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)' >
     <div>
       <input type='text' id='tj-datetime-input' class='' v-model='date' :name='name' v-on:click='toggleCal' autocomplete='off'  />
-      <div class='calender-div' :class='{noDisplay: hideCal}' >
+      <div class='calender-div' :class='{noDisplay: hideCal}'>
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
             <div class='month-setter'>
-              <button class='nav-l' v-on:click='leftYear'><</button>
+              <button class='nav-l' v-on:click='leftYear'>&#x3C;</button>
               <span class='year'>{{year}}</span>
-              <button class='nav-r' v-on:click='rightYear' >></button>
+              <button class='nav-r' v-on:click='rightYear' >&#x3E;</button>
             </div>
             <div class='month-setter'>
-              <button class='nav-l' v-on:click='leftMonth'><</button>
+              <button class='nav-l' v-on:click='leftMonth'>&#x3C;</button>
               <span class='month'>{{month}}</span>
-              <button class='nav-r' v-on:click='rightMonth' v-on:mousedown=''>></button>
+              <button class='nav-r' v-on:click='rightMonth' v-on:mousedown=''>&#x3E;</button>
             </div>
           </div>
           <div class='headers'>
@@ -26,7 +26,7 @@
         <div class='time-picker' :class='{noDisplay: hideTime}'>
           <div class='hour-selector' >
             <div v-on:click='showHourSelector' id='j-hour'>{{hour}}</div>
-            <div class='scroll-hider' ref='hourScrollerWrapper' :class='{showSelector: hourSelectorVisible}' >
+            <div class='scroll-hider' ref='hourScrollerWrapper' :class='{showSelector: hourSelectorVisible}'>
               <ul ref='hourScroller'>
                 <li v-for="(h, index) in hours" :class='{active: index == hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
               </ul>
@@ -37,9 +37,9 @@
           </div>
           <div class='minute-selector' >
             <div v-on:click='showMinuteSelector' id='j-minute'>{{minute}}</div>
-            <div class='scroll-hider' ref='minuteScrollerWrapper' :class='{showSelector: minuteSelectorVisible}' >
+            <div class='scroll-hider' ref='minuteScrollerWrapper' :class='{showSelector: minuteSelectorVisible}'>
               <ul ref='minuteScroller'>
-                <li v-for="(m, index) in minutes" :class='{active: index == minuteIndex}' v-on:click='setMinute(index, true)'  >{{m}}</li>
+                <li v-for="(m, index) in minutes" :class='{active: index == minuteIndex}' v-on:click='setMinute(index, true)'>{{m}}</li>
               </ul>
             </div>
           </div>
@@ -253,9 +253,12 @@ export default {
     this.year = this.timeStamp.getFullYear()
     this.monthIndex = this.timeStamp.getMonth()
     this.day = this.timeStamp.getDate()
+    this.hour = this.timeStamp.getHours()
+    this.minute = this.timeStamp.getMinutes()
     this.updateCalendar()
     document.addEventListener('keydown', this.keyIsDown)
     document.addEventListener('click', this.documentClicked)
+    this.setDate()
   },
   destroyed: function () {
     document.removeEventListener('keydown', this.keyIsDown)
