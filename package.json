@@ -1,6 +1,7 @@
 {
   "name": "vuejs-datetimepicker",
-  "version": "1.0.0",
+  "version": "1.0.2",
+  "main": "./src/datetime_picker.vue",
   "description": "Datetime picker for vuejs2",
   "author": "Tosin Adeoye <johnjokoo@gmail.com>",
   "private": false,
@@ -12,6 +13,24 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
+  },
+  "bugs": {
+    "url": "https://github.com/tjohnn/vuejs-datetimepicker/issues"
+  },
+  "homepage": "https://github.com/tjohnn/vuejs-datetimepicker",
+  "keywords": [
+    "vue",
+    "vuejs",
+    "vuejs2",
+    "datetimepicker",
+    "vuejs-datetimepicker",
+    "vue-datetimepicker",
+    "vuejs-datetime-picker",
+    "vue-datetime-picker"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjohnn/vuejs-datetimepicker.git"
   },
   "dependencies": {
     "vue": "^2.3.3"
@@ -81,14 +100,5 @@
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.18.0",
     "webpack-merge": "^4.1.0"
-  },
-  "engines": {
-    "node": ">= 4.0.0",
-    "npm": ">= 3.0.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
-}
+  }
+ }
