@@ -6,14 +6,14 @@
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
             <div class='month-setter'>
-              <button class='nav-l' v-on:click='leftYear'>&#x3C;</button>
+              <button type='button' class='nav-l' v-on:click='leftYear'>&#x3C;</button>
               <span class='year'>{{year}}</span>
-              <button class='nav-r' v-on:click='rightYear' >&#x3E;</button>
+              <button type='button' class='nav-r' v-on:click='rightYear' >&#x3E;</button>
             </div>
             <div class='month-setter'>
-              <button class='nav-l' v-on:click='leftMonth'>&#x3C;</button>
+              <button type='button' class='nav-l' v-on:click='leftMonth'>&#x3C;</button>
               <span class='month'>{{month}}</span>
-              <button class='nav-r' v-on:click='rightMonth' v-on:mousedown=''>&#x3E;</button>
+              <button type='button' class='nav-r' v-on:click='rightMonth' v-on:mousedown=''>&#x3E;</button>
             </div>
           </div>
           <div class='headers'>
@@ -50,7 +50,7 @@
             <div v-on:click='changePeriod'>{{period}}</div>
           </div>
         </div>
-        <button v-on:click='setDate' class='okButton'>OK</button>
+        <button type='button' v-on:click='setDate' class='okButton'>OK</button>
       </div>
     </div>
   </div>
