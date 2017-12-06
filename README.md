@@ -45,11 +45,12 @@ The first is in the case where you want to submit the form to a backend script w
     <datetime format="MM/DD/YYYY" width="300px" name='dob'></datetime>
 </template>
 ```
-The second case is if the value of the picker is needed in the current component or scope, the value would automatically and reactively be binded to e.g `dob` in the following example, you may then make a reference to the value as `this.dob` at any point within the current scope
+The second case is if the value of the picker is needed in the current component or scope, the value would automatically and reactively be binded to value assigned to `v-model` e.g `dob` in the following example, you may then make a reference to the value as `this.dob` at any point within the current scope.
+Also initializing the value of `dob` in the current scope initializes the value of the datetimepicker given that it is a valid date.
 ``` html
 <template>
   <div>
-    <datetime format="YYYY-MM-DD" @update:date-value="val => dob = val"></datetime>
+    <datetime format="YYYY-MM-DD" v-model='dob' ></datetime>
     <button @click='alertVal'>Alert current date value</button>
   </div>
 </template>

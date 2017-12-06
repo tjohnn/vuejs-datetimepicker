@@ -1,7 +1,7 @@
 <template>
   <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)' >
     <div>
-      <input type='text' id='tj-datetime-input' class='' v-model='date' :name='name' v-on:click='toggleCal' autocomplete='off'  />
+      <input type='text' id='tj-datetime-input' :value="value" v-model='date' :name='name' v-on:click='toggleCal' autocomplete='off'  />
       <div class='calender-div' :class='{noDisplay: hideCal}'>
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
@@ -59,10 +59,10 @@
 
 <script>
 export default {
-  props: ['format', 'name', 'width'],
+  props: ['format', 'name', 'width', 'value'],
   data () {
     return {
-      date: '',
+	  date: this.value,
       hideCal: true,
       activePort: null,
       timeStamp: new Date(),
@@ -82,7 +82,7 @@ export default {
     }
   },
   methods: {
-    leftMonth () {
+	leftMonth () {
       let index = this.months.indexOf(this.month)
       if (index === 0) {
         this.monthIndex = 11
@@ -184,7 +184,11 @@ export default {
         this.minuteSelectorVisible = false
         this.hourSelectorVisible = false
       }
-      event.preventDefault()
+	  if (this.minuteSelectorVisible || this.hourSelectorVisible) {
+		event.preventDefault()
+		this.minuteSelectorVisible = false
+        this.hourSelectorVisible = false
+	  }
     },
     scrollTopMinute () {
       let mHeight = this.$refs.minuteScroller.scrollHeight
@@ -224,7 +228,7 @@ export default {
       if (!this.dateFormat) {
         console.error('Invalid date format supplied')
       } else {
-        let h = this.hour
+        let h = this.hour + ''
         if (h === '12') {
           if (this.period === 'AM') {
             h = '00'
@@ -233,28 +237,39 @@ export default {
           }
         } else if (this.period === 'PM') {
           h = parseInt(h) + 12
-          h = '' + h
+		  h = '' + h
         }
         d = this.dateFormat
         d = d.replace('YYYY', this.year)
         d = d.replace('DD', this.day < 10 ? '0' + this.day : this.day)
         let m = this.monthIndex + 1
         d = d.replace('MM', m < 10 ? '0' + m : m)
-        d = d.replace('h', h)
-        d = d.replace('i', this.minute)
+		this.minute += ''
+        d = d.replace('h', h.length < 2 ? '0' + h : '' + h )
+        d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
         d = d.replace('s', '00')
-        this.$emit('update:date-value', d)
+        this.$emit('input', d)
         this.date = d
         this.hideCal = true
       }
     }
   },
   created () {
+	this.date = this.value
+	if (this.date) {
+		try {
+			this.timeStamp = new Date(this.date)
+		} catch (e) {
+			
+		}
+	}
     this.year = this.timeStamp.getFullYear()
     this.monthIndex = this.timeStamp.getMonth()
     this.day = this.timeStamp.getDate()
     this.hour = this.timeStamp.getHours()
+    this.minute = this.hour < 10 ? '0' + this.hour : '' + this.hour
     this.minute = this.timeStamp.getMinutes()
+    this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
     this.updateCalendar()
     document.addEventListener('keydown', this.keyIsDown)
     document.addEventListener('click', this.documentClicked)
