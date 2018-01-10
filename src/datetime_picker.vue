@@ -1,7 +1,7 @@
 <template>
   <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)' >
     <div>
-      <input type='text' id='tj-datetime-input' :value="value" v-model='date' :name='name' v-on:click='toggleCal' autocomplete='off'  />
+      <input type='text' id='tj-datetime-input' :value="value"  :name='name' v-on:click='toggleCal' autocomplete='off'  />
       <div class='calender-div' :class='{noDisplay: hideCal}'>
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
@@ -62,7 +62,6 @@ export default {
   props: ['format', 'name', 'width', 'value'],
   data () {
     return {
-	  date: this.value,
       hideCal: true,
       activePort: null,
       timeStamp: new Date(),
@@ -249,18 +248,17 @@ export default {
         d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
         d = d.replace('s', '00')
         this.$emit('input', d)
-        this.date = d
+        this.value = d
         this.hideCal = true
       }
     }
   },
   created () {
-	this.date = this.value
-	if (this.date) {
+	if (this.value) {
 		try {
-			this.timeStamp = new Date(this.date)
+			this.timeStamp = new Date(this.value)
 		} catch (e) {
-			
+
 		}
 	}
     this.year = this.timeStamp.getFullYear()
