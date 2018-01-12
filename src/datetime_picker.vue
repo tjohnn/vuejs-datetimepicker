@@ -274,6 +274,27 @@ export default {
     document.addEventListener('click', this.documentClicked)
     this.setDate()
   },
+  watch: {
+    value (newVal, oldVal) {
+      if (newVal) {
+        this.value = newVal;
+    		try {
+    			this.timeStamp = new Date(this.value)
+    		} catch (e) {
+
+    		}
+    	}
+      this.year = this.timeStamp.getFullYear()
+      this.monthIndex = this.timeStamp.getMonth()
+      this.day = this.timeStamp.getDate()
+      this.hour = this.timeStamp.getHours()
+      this.hour = this.hour < 10 ? '0' + this.hour : '' + this.hour
+      this.minute = this.timeStamp.getMinutes()
+      this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
+      this.updateCalendar()
+      this.setDate()
+    }
+  },
   destroyed: function () {
     document.removeEventListener('keydown', this.keyIsDown)
     document.removeEventListener('click', this.documentClicked)
