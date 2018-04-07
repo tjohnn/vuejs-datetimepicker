@@ -14,7 +14,7 @@ $ npm install vuejs-datetimepicker
 # Usage
 ``` html
 <template>
-    <datetime format="MM/DD/YYYY" width="300px" @update:date-value="val => dob = val"></datetime>
+    <datetime format="MM/DD/YYYY" width="300px" v-model="val"></datetime>
 </template>
 
 <script>
