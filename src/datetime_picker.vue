@@ -43,10 +43,10 @@
               </ul>
             </div>
           </div>
-          <div class='time-separator'>
+          <div class='time-separator' v-if='periodStyle === 12'>
             <span>:</span>
           </div>
-          <div class='minute-selector' >
+          <div class='minute-selector' v-if='periodStyle === 12'>
             <div v-on:click='changePeriod'>{{period}}</div>
           </div>
         </div>
@@ -228,16 +228,24 @@ export default {
       if (!this.dateFormat) {
         console.error('Invalid date format supplied')
       } else {
+        if (this.dateFormat.indexOf('H') !== -1) {
+          this.periodStyle = 24;
+          this.period = null;
+        } else {
+          this.periodStyle = 12;
+        }
         let h = this.hour + ''
-        if (h === '12') {
-          if (this.period === 'AM') {
-            h = '00'
-          } else {
-            h = '12'
+        if (this.periodStyle === 12) {
+          if (h === '12') {
+            if (this.period === 'AM') {
+              h = '00'
+            } else {
+              h = '12'
+            }
+          } else if (this.period === 'PM') {
+            h = parseInt(h) + 12
+            h = '' + h
           }
-        } else if (this.period === 'PM') {
-          h = parseInt(h) + 12
-		  h = '' + h
         }
         d = this.dateFormat
         d = d.replace('YYYY', this.year)
@@ -245,7 +253,7 @@ export default {
         let m = this.monthIndex + 1
         d = d.replace('MM', m < 10 ? '0' + m : m)
 		this.minute += ''
-        d = d.replace('h', h.length < 2 ? '0' + h : '' + h )
+        d = d.replace(this.periodStyle === 24 ? 'H' : 'h', h.length < 2 ? '0' + h : '' + h )
         d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
         d = d.replace('s', '00')
         this.$emit('input', d)
@@ -331,8 +339,14 @@ export default {
     },
     hours () {
       let arr = []
-      for (let i = 1; i <= 12; i++) {
-        i < 10 ? arr.push('0' + i) : arr.push('' + i)
+      if (this.periodStyle === 24) {
+        for (let i = 0; i < this.periodStyle; i++) {
+          i < 10 ? arr.push('0' + i) : arr.push('' + i)
+        }
+      } else {
+        for (let i = 1; i <= this.periodStyle; i++) {
+          i < 10 ? arr.push('0' + i) : arr.push('' + i)
+        }
       }
       return arr
     },
@@ -340,9 +354,11 @@ export default {
       let f = 'YYYY-MM-DD h:i:s'
       let allowedFormats = [
         'YYYY-MM-DD h:i:s', 'DD-MM-YYYY h:i:s', 'MM-DD-YYYY h:i:s',
+        'YYYY-MM-DD H:i:s', 'DD-MM-YYYY H:i:s', 'MM-DD-YYYY H:i:s',
         'YYYY-MM-DD', 'DD-MM-YYYY', 'MM-DD-YYYY',
-        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 'h:i:s',
-        'YYYY/MM/DD h:i:s', 'DD/MM/YYYY h:i:s', 'MM/DD/YYYY h:i:s'
+        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 'h:i:s', 'H:i:s',
+        'YYYY/MM/DD h:i:s', 'DD/MM/YYYY h:i:s', 'MM/DD/YYYY h:i:s',
+        'YYYY/MM/DD H:i:s', 'DD/MM/YYYY H:i:s', 'MM/DD/YYYY H:i:s'
       ]
       if (this.format) {
         f = this.format
@@ -355,10 +371,10 @@ export default {
       }
     },
     hideTime () {
-      return this.dateFormat.indexOf('h:i:s') === -1
+      return this.dateFormat.indexOf('h:i:s') === -1 && this.dateFormat.indexOf('H:i:s') === -1
     },
     hideDate () {
-      return this.dateFormat === 'h:i:s'
+      return this.dateFormat === 'h:i:s' || this.dateFormat === 'H:i:s'
     }
   }
 }
@@ -383,6 +399,7 @@ export default {
   .calender-div{
     width: 232px;
     box-shadow: 1px 2px 5px #ccc;
+    background: #FFF;
     position: absolute;
     display: inline-block;
     left: 0;
