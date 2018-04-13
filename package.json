@@ -32,7 +32,6 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "date-fns": "^1.29.0",
     "vue": "^2.3.3"
   },
   "deprecated": false,

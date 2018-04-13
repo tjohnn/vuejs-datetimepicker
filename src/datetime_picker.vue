@@ -17,14 +17,10 @@
             </div>
           </div>
           <div class='headers'>
-            <span class='days' v-for="port in days">{{port}}</span>
+            <span class='days' v-for="(port, index) in days">{{port}}</span>
           </div>
           <div>
-            <div class="week" v-for="(week, weekIndex) in weeks">
-              <span class="port" v-for="(day, dayIndex) in week" v-on:click='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort}'>
-                {{day}}
-              </span>
-            </div>
+            <span  class="port" v-for="(port, index) in ports" :class='{activePort: index === activePort}' v-on:click='setDay(index, port)'>{{port}}</span>
           </div>
         </div>
         <div class='time-picker' :class='{noDisplay: hideTime}'>
@@ -62,42 +58,8 @@
 </template>
 
 <script>
-import startOfMonth from 'date-fns/start_of_month';
-import endOfMonth from 'date-fns/end_of_month';
-import eachDay from 'date-fns/each_day';
-import getDay from 'date-fns/get_day';
-import format from 'date-fns/format';
-import startOfDay from 'date-fns/start_of_day';
-import isEqual from 'date-fns/is_equal';
-
-const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-
 export default {
-  props: {
-    format: {
-      type: String,
-      default: 'YYYY-MM-DD h:i:s'
-    },
-    name: {
-      type: String
-    },
-    width: {
-      type: String
-    },
-    value: {
-      type: String,
-      default: new Date()
-    },
-    firstDayOfWeek: {
-      type: Number,
-      default: 0,
-      validator: function(value) {
-        const val = parseInt(value, 10);
-        return val >= 0 && val <= 1;
-      },
-      message: 'Only 0 (Sunday) and 1 (Monday) are supported.'
-    }
-  },
+  props: ['format', 'name', 'width', 'value'],
   data () {
     return {
       date: this.value,
@@ -105,7 +67,7 @@ export default {
       activePort: null,
       timeStamp: new Date(),
       months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      days: [],
+      days: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
       monthIndex: 0,
       hourIndex: 0,
       minuteIndex: 0,
@@ -120,7 +82,7 @@ export default {
     }
   },
   methods: {
-	  leftMonth () {
+	leftMonth () {
       let index = this.months.indexOf(this.month)
       if (index === 0) {
         this.monthIndex = 11
@@ -146,49 +108,36 @@ export default {
       this.year--
       this.updateCalendar()
     },
-    updateActivePortFromWeek (week, weekIndex) {
-      const currentActive = startOfDay(this.timeStamp);
-      const index = week.findIndex(day => isEqual(currentActive, day));
-      if (index !== -1) {
-        this.activePort = weekIndex*7 + index;
-      }
-    },
     updateCalendar () {
-      const date = new Date(this.year, this.monthIndex, 1, 0, 0, 0);
-      const weeks = [];
-      let week = null;
-      let weekDays = new Array(7);
-      // let index = 0;
-      this.activePort = null;
-      eachDay(date, endOfMonth(date)).forEach(day => {
-        const weekday = getDay(day);
-        if (weekday === this.normalizedFirstDayOfWeek) {
-          if (week) {
-            weeks.push(week);
-            // Add those days that were not part of the month to the index
-            // index += week.filter(d => d === null).length;
-            this.updateActivePortFromWeek(weekDays, weeks.length - 1);
-            weekDays = new Array(7);
-          }
-          week = new Array(7);
-        } else if (week === null) {
-          week = new Array(7);
-        }
-        const idx = (weekday - this.normalizedFirstDayOfWeek + 7) % 7
-        week[idx] = format(day, 'DD');
-        weekDays[idx] = day;
-      });
-      if (week.some(n => n)) {
-        weeks.push(week);
-        this.updateActivePortFromWeek(weekDays, weeks.length - 1);
+      let me = this
+      let date = new Date(me.year, me.monthIndex, 1, 0, 0, 0)
+      let day = date.getDay()
+      let daysInMonth = new Date(me.year, me.monthIndex + 1, 0).getDate()
+      let ports = []
+      let portsLenght = 35
+      if (day === 6 || (day === 5 && daysInMonth === 31)) {
+        portsLenght = 42
       }
-      this.weeks = weeks;
+      let activeFound = false
+      for (let i = 0; i < portsLenght; i++) {
+        let j = i - day
+        let curr = (j < 0 || j >= daysInMonth) ? '' : j + 1
+        ports.push(curr)
+        if (curr === me.day && this.timeStamp.getMonth() === me.monthIndex && this.timeStamp.getFullYear() === me.year) {
+          me.activePort = i
+          activeFound = true
+        }
+      }
+      if (!activeFound) {
+        me.activePort = -1
+      }
+      this.ports = ports
     },
     setDay (index, port) {
       if (port !== '') {
-        this.activePort = index;
-        this.day = parseInt(port, 10);
-        this.timeStamp = new Date(this.year, this.monthIndex, this.day);
+        this.activePort = index
+        this.day = port
+        this.timeStamp = new Date(this.year, this.monthIndex, this.day)
       }
     },
     setMinute (index, closeAfterSet) {
@@ -303,7 +252,7 @@ export default {
         d = d.replace('DD', this.day < 10 ? '0' + this.day : this.day)
         let m = this.monthIndex + 1
         d = d.replace('MM', m < 10 ? '0' + m : m)
-		    this.minute += ''
+		this.minute += ''
         d = d.replace(this.periodStyle === 24 ? 'H' : 'h', h.length < 2 ? '0' + h : '' + h )
         d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
         d = d.replace('s', '00')
@@ -318,7 +267,7 @@ export default {
   		try {
   			this.timeStamp = new Date(this.value)
   		} catch (e) {
-        console.log(e);
+
   		}
   	}
     this.year = this.timeStamp.getFullYear()
@@ -329,9 +278,6 @@ export default {
     this.minute = this.timeStamp.getMinutes()
     this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
     this.updateCalendar()
-    days.forEach((day, idx) => {
-      this.days[(idx - this.normalizedFirstDayOfWeek + 7) % 7] = day;
-    });
     document.addEventListener('keydown', this.keyIsDown)
     document.addEventListener('click', this.documentClicked)
     this.setDate()
@@ -362,9 +308,6 @@ export default {
     document.removeEventListener('click', this.documentClicked)
   },
   computed: {
-    normalizedFirstDayOfWeek: function() {
-      return parseInt(this.firstDayOfWeek, 10);
-    },
     ports: {
       get: function () {
         let p = []
