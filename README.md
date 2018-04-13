@@ -73,6 +73,16 @@ export default {
 }
 </script>
 ```
+
+## The first day of the week
+
+By default, the datetime-picker renders Sunday as the first day of each week.
+If you want to use Monday instead, set the `firstDayOfWeek` property to `1`:
+
+```
+<datetime … firstDayOfWeek="1"></datetime>
+```
+
 # License
 
 [The MIT License](http://opensource.org/licenses/MIT)
