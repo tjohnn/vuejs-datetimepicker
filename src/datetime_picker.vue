@@ -76,7 +76,7 @@ export default {
   props: {
     format: {
       type: String,
-      default: 'YYYY-MM-DD h:i:s'
+      default: 'YYYY-MM-DD h:i:s',
     },
     name: {
       type: String
@@ -89,11 +89,15 @@ export default {
       default: new Date()
     },
     firstDayOfWeek: {
-      type: Number,
       default: 0,
       validator: function(value) {
-        const val = parseInt(value, 10);
-        return val >= 0 && val <= 1;
+        try {
+          const val = parseInt(value, 10)
+          return val >= 0 && val <= 1
+        } catch (e) {
+          console.warn(e.message)
+          return false
+        }
       },
       message: 'Only 0 (Sunday) and 1 (Monday) are supported.'
     }
@@ -276,47 +280,55 @@ export default {
     },
     setDate () {
       let d = null
-      if (!this.dateFormat) {
-        console.error('Invalid date format supplied')
+      if (this.dateFormat.indexOf('H') !== -1) {
+        this.periodStyle = 24;
+        this.period = null;
       } else {
-        if (this.dateFormat.indexOf('H') !== -1) {
-          this.periodStyle = 24;
-          this.period = null;
-        } else {
-          this.periodStyle = 12;
-        }
-        let h = this.hour + ''
-        if (this.periodStyle === 12) {
-          if (h === '12') {
-            if (this.period === 'AM') {
-              h = '00'
-            } else {
-              h = '12'
-            }
-          } else if (this.period === 'PM') {
-            h = parseInt(h) + 12
-            h = '' + h
+        this.periodStyle = 12;
+      }
+      let h = this.hour + ''
+      if (this.periodStyle === 12) {
+        if (h === '12') {
+          if (this.period === 'AM') {
+            h = '00'
+          } else {
+            h = '12'
           }
+        } else if (this.period === 'PM') {
+          h = parseInt(h) + 12
+          h = '' + h
         }
-        d = this.dateFormat
-        d = d.replace('YYYY', this.year)
-        d = d.replace('DD', this.day < 10 ? '0' + this.day : this.day)
-        let m = this.monthIndex + 1
-        d = d.replace('MM', m < 10 ? '0' + m : m)
-		    this.minute += ''
-        d = d.replace(this.periodStyle === 24 ? 'H' : 'h', h.length < 2 ? '0' + h : '' + h )
-        d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
-        d = d.replace('s', '00')
-        this.$emit('input', d)
-        this.date = d
-        this.hideCal = true
+      }
+      d = this.dateFormat
+      d = d.replace('YYYY', this.year)
+      d = d.replace('DD', this.day < 10 ? '0' + this.day : this.day)
+      let m = this.monthIndex + 1
+      d = d.replace('MM', m < 10 ? '0' + m : m)
+	    this.minute += ''
+      d = d.replace(this.periodStyle === 24 ? 'H' : 'h', h.length < 2 ? '0' + h : '' + h )
+      d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
+      d = d.replace('s', '00')
+      this.$emit('input', d)
+      this.date = d
+      this.hideCal = true
+    },
+    makeDateObject (val) {
+      // handle support for eu date format
+      if (this.format.indexOf('DD-MM-YYYY') === 0) {
+        let arr = val.split('-')
+        return new Date(arr[1] + '-' + arr[0] + '-' + arr[2])
+      } else if (this.format.indexOf('DD/MM/YYYY') === 0) {
+        let arr = val.split('/')
+        return new Date(arr[1] + '/' + arr[0] + '/' + arr[2])
+      } else{
+        return new Date(val)
       }
     }
   },
   created () {
   	if (this.value) {
   		try {
-  			this.timeStamp = new Date(this.value)
+  			this.timeStamp = this.makeDateObject(this.value)
   		} catch (e) {
         console.log(e);
   		}
@@ -341,9 +353,10 @@ export default {
       if (newVal) {
         this.value = newVal;
     		try {
-    			this.timeStamp = new Date(this.value)
+          this.timeStamp = this.makeDateObject(this.value)
     		} catch (e) {
-
+          console.warn(e.message +'. Current date is being used.');
+          this.timeStamp = new Date()
     		}
     	}
       this.year = this.timeStamp.getFullYear()
@@ -421,8 +434,9 @@ export default {
         f = this.format
       }
       if (allowedFormats.indexOf(f) < 0) {
-        console.warn('Invalid date format supplied')
-        return null
+        console.warn('Invalid date format supplied. Current default date format is being used.')
+        // return default date format if date format is invalid
+        return 'YYYY-MM-DD h:i:s'
       } else {
         return f
       }
