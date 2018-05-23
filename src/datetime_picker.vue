@@ -458,6 +458,7 @@ export default {
     box-shadow: 1px 2px 5px #ccc;
     background: #FFF;
     position: absolute;
+    z-index:10;
     display: inline-block;
     left: 0;
     top: 40px;
