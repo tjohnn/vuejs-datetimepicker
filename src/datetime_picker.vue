@@ -182,7 +182,7 @@ export default {
         week[idx] = format(day, 'DD');
         weekDays[idx] = day;
       });
-      if (week.some(n => n)) {
+      if (week && week.some(n => n)) {
         weeks.push(week);
         this.updateActivePortFromWeek(weekDays, weeks.length - 1);
       }
@@ -349,6 +349,8 @@ export default {
     this.setDate()
   },
   watch: {
+    // Used for changing date value explicitly but probably not needed
+    /*
     value (newVal, oldVal) {
       if (newVal) {
         this.value = newVal;
@@ -369,6 +371,7 @@ export default {
       this.updateCalendar()
       this.setDate()
     }
+    */
   },
   destroyed: function () {
     document.removeEventListener('keydown', this.keyIsDown)
