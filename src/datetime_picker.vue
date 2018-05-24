@@ -189,7 +189,7 @@ export default {
       this.weeks = weeks;
     },
     setDay (index, port) {
-      if (port !== '') {
+      if (port) {
         this.activePort = index;
         this.day = parseInt(port, 10);
         this.timeStamp = new Date(this.year, this.monthIndex, this.day);
@@ -294,7 +294,7 @@ export default {
           } else {
             h = '12'
           }
-        } else if (this.period === 'PM') {
+        } else if (this.period === 'PM' && parseInt(h) < 12) {
           h = parseInt(h) + 12
           h = '' + h
         }
@@ -349,13 +349,15 @@ export default {
     this.setDate()
   },
   watch: {
-    // Used for changing date value explicitly but probably not needed
-    /*
     value (newVal, oldVal) {
       if (newVal) {
         this.value = newVal;
     		try {
           this.timeStamp = this.makeDateObject(this.value)
+          let old = this.makeDateObject(oldVal)
+          if (oldVal === this.timeStamp) {
+            return
+          }
     		} catch (e) {
           console.warn(e.message +'. Current date is being used.');
           this.timeStamp = new Date()
@@ -371,7 +373,6 @@ export default {
       this.updateCalendar()
       this.setDate()
     }
-    */
   },
   destroyed: function () {
     document.removeEventListener('keydown', this.keyIsDown)
@@ -471,23 +472,24 @@ export default {
     position: relative;
   }
   .calender-div{
-    width: 232px;
+    width: 245px;
     box-shadow: 1px 2px 5px #ccc;
     background: #FFF;
     position: absolute;
     display: inline-block;
     left: 0;
-    top: 40px;
+    top: 35px;
     color: #444;
     font-size: 14px;
     padding-bottom: 10px;
   }
   .port, .days{
     display: inline-block;
-    width: 25px;
-    height: 20px;
-    padding: 3px;
-    margin: 1px;
+    width: 30px;
+    height: 30px;
+    padding: 5px 3px;
+    margin: 2px;
+    border-radius: 2px;
     text-align: center;
     vertical-align: top;
     cursor: pointer;
@@ -524,6 +526,9 @@ export default {
     border: 0;
     padding: 7px;
     margin:0;
+  }
+  .nav-l:focus, .nav-r:focus{
+    outline: none;
   }
   .nav-l{
     float: left;
