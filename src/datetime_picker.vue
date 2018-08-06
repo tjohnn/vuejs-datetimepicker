@@ -314,15 +314,37 @@ export default {
     },
     makeDateObject (val) {
       // handle support for eu date format
-      if (this.format.indexOf('DD-MM-YYYY') === 0) {
-        let arr = val.split('-')
-        return new Date(arr[1] + '-' + arr[0] + '-' + arr[2])
-      } else if (this.format.indexOf('DD/MM/YYYY') === 0) {
-        let arr = val.split('/')
-        return new Date(arr[1] + '/' + arr[0] + '/' + arr[2])
-      } else{
-        return new Date(val)
+      let dateAndTime = val.split(' ')
+      let arr = []
+      if (this.format.indexOf('-') !== -1) {
+        arr = dateAndTime[0].split('-')
+      } else {
+        arr = dateAndTime[0].split('/')
       }
+      let year = 0
+      let month = 0
+      let day = 0
+      if (this.format.indexOf('DD/MM/YYYY') === 0 || this.format.indexOf('DD-MM-YYYY') === 0) {
+        year = arr[2]
+        month = arr[1]
+        day = arr[0]
+      } else if (this.format.indexOf('YYYY/MM/DD') === 0 || this.format.indexOf('YYYY-MM-DD') === 0) {
+        year = arr[0]
+        month = arr[1]
+        day = arr[2]
+      } else {
+        year = arr[2]
+        month = arr[0]
+        day = arr[1]
+      }
+
+      if(dateAndTime.length === 2 && dateAndTime[1]){
+        var splitTime = dateAndTime[1].split(':')
+        return new Date(parseInt(year), parseInt(month)-1, parseInt(day), parseInt(splitTime[0]), parseInt(splitTime[1]), parseInt(splitTime[2]))
+      } else {
+        return new Date(parseInt(year), parseInt(month)-1, parseInt(day))
+      }
+
     }
   },
   created () {
@@ -330,9 +352,11 @@ export default {
   		try {
   			this.timeStamp = this.makeDateObject(this.value)
   		} catch (e) {
+        this.timeStamp = new Date()
         console.log(e);
   		}
   	}
+
     this.year = this.timeStamp.getFullYear()
     this.monthIndex = this.timeStamp.getMonth()
     this.day = this.timeStamp.getDate()
@@ -359,7 +383,7 @@ export default {
             return
           }
     		} catch (e) {
-          console.warn(e.message +'. Current date is being used.');
+          console.warn(e.message +'. Current date is being used.')
           this.timeStamp = new Date()
     		}
     	}
