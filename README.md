@@ -1,17 +1,21 @@
-> datetimepicker component for Vue.js
+# datetimepicker component for Vue.js
 
-# Requirements
+## Requirements
 
 - [Vue.js](https://github.com/vuejs/vue) `^2.x`
 
-# Installation
+## Installation
 
-## npm
+### npm
 ``` bash
 $ npm install vuejs-datetimepicker
 ```
 
-# Usage
+## Demo
+
+https://codesandbox.io/s/k32l23wlm5
+
+## Usage
 ``` html
 <template>
     <datetime format="MM/DD/YYYY" width="300px" v-model="val"></datetime>
@@ -25,25 +29,25 @@ export default {
 };
 </script>
 ```
-## List of accepted formats
-### DateTime formats
-#### 12h (AM/PM)
+### List of accepted formats
+#### DateTime formats
+##### 12h (AM/PM)
 `YYYY-MM-DD h:i:s`, `DD-MM-YYYY h:i:s`, `MM-DD-YYYY h:i:s`,
 `YYYY/MM/DD h:i:s`, `DD/MM/YYYY h:i:s` and `MM/DD/YYYY h:i:s`
 
-#### 24h
+##### 24h
 `YYYY-MM-DD H:i:s`, `DD-MM-YYYY H:i:s`, `MM-DD-YYYY H:i:s`,
 `YYYY/MM/DD H:i:s`, `DD/MM/YYYY H:i:s` and `MM/DD/YYYY H:i:s`
 
-### Date only formats
+#### Date only formats
 `YYYY-MM-DD`, `DD-MM-YYYY`, `MM-DD-YYYY`,
 `YYYY/MM/DD`, `DD/MM/YYYY` and `MM/DD/YYYY`
 
-### Time only format
+#### Time only format
 `h:i:s` (12h) and `H:i:s` (24h)
 
-## Accepting value of date
-### The value of picked date can be accepted in 2 ways.
+### Accepting value of date
+#### The value of picked date can be accepted in 2 ways.
 The first is in the case where you want to submit the form to a backend script without interruption from any javascript event,  set the name attribute of the component to the value you want to accept, just like it is set for normal HTML inputs, e.g using dob as the name in the following example
 ``` html
 <template>
@@ -74,7 +78,7 @@ export default {
 </script>
 ```
 
-## The first day of the week
+### The first day of the week
 
 By default, the datetime-picker renders Sunday as the first day of each week.
 If you want to use Monday instead, set the `firstDayOfWeek` property to `1`:
@@ -83,6 +87,6 @@ If you want to use Monday instead, set the `firstDayOfWeek` property to `1`:
 <datetime … firstDayOfWeek="1"></datetime>
 ```
 
-# License
+## License
 
 [The MIT License](http://opensource.org/licenses/MIT)
