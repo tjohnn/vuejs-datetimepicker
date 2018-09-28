@@ -12,8 +12,7 @@ $ npm install vuejs-datetimepicker
 ```
 
 ## Demo
-
-https://codesandbox.io/s/k32l23wlm5
+https://codesandbox.io/s/rw3l109yzo
 
 ## Usage
 ``` html

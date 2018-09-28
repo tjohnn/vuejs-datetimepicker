@@ -73,6 +73,7 @@ import isEqual from 'date-fns/is_equal';
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 export default {
+  name: 'datetime-picker',
   props: {
     format: {
       type: String,
@@ -496,7 +497,7 @@ export default {
     position: relative;
   }
   .calender-div{
-    width: 245px;
+    min-width: 270px;
     box-shadow: 1px 2px 5px #ccc;
     background: #FFF;
     position: absolute;
@@ -506,6 +507,7 @@ export default {
     color: #444;
     font-size: 14px;
     padding-bottom: 10px;
+    z-index: 100;
   }
   .port, .days{
     display: inline-block;
