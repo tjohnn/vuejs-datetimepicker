@@ -29,7 +29,7 @@
         </div>
         <div class='time-picker' :class='{noDisplay: hideTime}'>
           <div class='hour-selector' >
-            <div v-on:click='showHourSelector' id='j-hour'>{{hour}}</div>
+            <div v-on:click='showHourSelector' id='j-hour'>{{periodStyle === 12 && hour > 12 ? hour - 12 : hour}}</div>
             <div class='scroll-hider' ref='hourScrollerWrapper' :class='{showSelector: hourSelectorVisible}'>
               <ul ref='hourScroller'>
                 <li v-for="(h, index) in hours" :class='{active: index == hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
@@ -71,7 +71,8 @@ import startOfDay from 'date-fns/start_of_day';
 import isEqual from 'date-fns/is_equal';
 
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-
+const AM = 'AM'
+const PM = 'PM'
 export default {
   name: 'datetime-picker',
   props: {
@@ -121,7 +122,7 @@ export default {
       day: 1,
       minuteSelectorVisible: false,
       hourSelectorVisible: false,
-      period: 'AM'
+      period: AM
     }
   },
   methods: {
@@ -259,7 +260,7 @@ export default {
       this.$refs.hourScroller.scrollTop = top
     },
     changePeriod () {
-      this.period = this.period === 'AM' ? 'PM' : 'AM'
+      this.period = this.period === AM ? PM : AM
     },
     calendarClicked (event) {
       if (event.target.id !== 'j-hour' && event.target.id !== 'j-minute') {
@@ -288,15 +289,15 @@ export default {
         this.periodStyle = 12;
       }
       let h = this.hour + ''
+
       if (this.periodStyle === 12) {
         if (h === '12') {
-          if (this.period === 'AM') {
-            h = '00'
-          } else {
-            h = '12'
-          }
-        } else if (this.period === 'PM' && parseInt(h) < 12) {
+          h = this.period === AM ? '00' : '12'
+        } else if (this.period === PM && parseInt(h) < 12) {
           h = parseInt(h) + 12
+          h = '' + h
+        } else if (this.period === AM && parseInt(h) > 12) {
+          h = parseInt(h) - 12
           h = '' + h
         }
       }
@@ -313,6 +314,9 @@ export default {
       this.date = d
       this.hideCal = true
     },
+    /**
+    `*Creates a date object from a given date string
+    */
     makeDateObject (val) {
       // handle support for eu date format
       let dateAndTime = val.split(' ')
@@ -339,19 +343,34 @@ export default {
         day = arr[1]
       }
 
-      if(dateAndTime.length === 2 && dateAndTime[1]){
-        var splitTime = dateAndTime[1].split(':')
-        return new Date(parseInt(year), parseInt(month)-1, parseInt(day), parseInt(splitTime[0]), parseInt(splitTime[1]), parseInt(splitTime[2]))
+      let date = new Date();
+      if(this.hideDate){
+        // time only
+        var splitTime = dateAndTime[0].split(':')
+        date.setHours(parseInt(splitTime[0]), parseInt(splitTime[1]), parseInt(splitTime[2]), 0)
+      } else if (this.hideTime) {
+        // date only
+        date = new Date(parseInt(year), parseInt(month)-1, parseInt(day))
       } else {
-        return new Date(parseInt(year), parseInt(month)-1, parseInt(day))
+        // we have both date and time
+        var splitTime = dateAndTime.dateAndTime[1].split(':')
+        date = new Date(parseInt(year), parseInt(month)-1, parseInt(day), parseInt(splitTime[0]), parseInt(splitTime[1]), parseInt(splitTime[2]))
       }
 
+      return date
     }
   },
   created () {
   	if (this.value) {
   		try {
   			this.timeStamp = this.makeDateObject(this.value)
+
+        // set #period (am or pm) based on date hour
+        if (this.timeStamp.getHours() >= 12) {
+          this.period = PM
+        } else {
+          this.period = AM
+        }
   		} catch (e) {
         this.timeStamp = new Date()
         console.log(e);
