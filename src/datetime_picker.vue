@@ -353,7 +353,7 @@ export default {
         date = new Date(parseInt(year), parseInt(month)-1, parseInt(day))
       } else {
         // we have both date and time
-        var splitTime = dateAndTime.dateAndTime[1].split(':')
+        var splitTime = dateAndTime[1].split(':')
         date = new Date(parseInt(year), parseInt(month)-1, parseInt(day), parseInt(splitTime[0]), parseInt(splitTime[1]), parseInt(splitTime[2]))
       }
 
