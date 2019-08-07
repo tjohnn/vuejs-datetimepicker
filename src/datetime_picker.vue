@@ -1,7 +1,7 @@
 <template>
-  <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)' >
+  <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)'  v-on:blur='toggleCal' >
     <div>
-      <input type='text' id='tj-datetime-input' :value="date"  :name='name' v-on:click='toggleCal' autocomplete='off'  />
+      <input type='text' :readonly="readonly" id='tj-datetime-input' :required="required" :value="date"  :name='name' v-on:click='toggleCal'autocomplete='off'  />
       <div class='calender-div' :class='{noDisplay: hideCal}'>
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
@@ -90,6 +90,14 @@ export default {
     value: {
       type: String,
       default: ""
+    },
+    required: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
+      type: Boolean,
+      default: false
     },
     firstDayOfWeek: {
       default: 0,
