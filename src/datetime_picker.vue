@@ -1,7 +1,7 @@
 <template>
-  <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)' >
+  <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)'  v-on:blur='toggleCal' >
     <div>
-      <input type='text' id='tj-datetime-input' :value="date"  :name='name' v-on:click='toggleCal' autocomplete='off'  />
+      <input type='text' :readonly="readonly" id='tj-datetime-input' :required="required" :value="date"  :name='name' v-on:click='toggleCal'autocomplete='off'  />
       <div class='calender-div' :class='{noDisplay: hideCal}'>
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
@@ -54,6 +54,7 @@
             <div v-on:click='changePeriod'>{{period}}</div>
           </div>
         </div>
+        <button type='button' v-on:click='clearDate' class='okButton'>Clear</button>
         <button type='button' v-on:click='setDate' class='okButton'>OK</button>
       </div>
     </div>
@@ -88,7 +89,15 @@ export default {
     },
     value: {
       type: String,
-      default: new Date()
+      default: ""
+    },
+    required: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
+      type: Boolean,
+      default: false
     },
     firstDayOfWeek: {
       default: 0,
@@ -102,7 +111,7 @@ export default {
         }
       },
       message: 'Only 0 (Sunday) and 1 (Monday) are supported.'
-    }
+    },
   },
   data () {
     return {
@@ -122,11 +131,12 @@ export default {
       day: 1,
       minuteSelectorVisible: false,
       hourSelectorVisible: false,
-      period: AM
+      period: AM,
+      periodStyle: 12
     }
   },
   methods: {
-	  leftMonth () {
+    leftMonth () {
       let index = this.months.indexOf(this.month)
       if (index === 0) {
         this.monthIndex = 11
@@ -241,11 +251,11 @@ export default {
         this.minuteSelectorVisible = false
         this.hourSelectorVisible = false
       }
-	  if (this.minuteSelectorVisible || this.hourSelectorVisible) {
-		event.preventDefault()
-		this.minuteSelectorVisible = false
+    if (this.minuteSelectorVisible || this.hourSelectorVisible) {
+    event.preventDefault()
+    this.minuteSelectorVisible = false
         this.hourSelectorVisible = false
-	  }
+    }
     },
     scrollTopMinute () {
       let mHeight = this.$refs.minuteScroller.scrollHeight
@@ -306,7 +316,7 @@ export default {
       d = d.replace('DD', this.day < 10 ? '0' + this.day : this.day)
       let m = this.monthIndex + 1
       d = d.replace('MM', m < 10 ? '0' + m : m)
-	    this.minute += ''
+      this.minute += ''
       d = d.replace(this.periodStyle === 24 ? 'H' : 'h', h.length < 2 ? '0' + h : '' + h )
       d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
       d = d.replace('s', '00')
@@ -358,12 +368,17 @@ export default {
       }
 
       return date
-    }
+    },
+    clearDate(){
+      this.date = ''
+      this.$emit('input', '')
+      this.toggleCal ()
+    },
   },
   created () {
-  	if (this.value) {
-  		try {
-  			this.timeStamp = this.makeDateObject(this.value)
+    if (this.value) {
+      try {
+        this.timeStamp = this.makeDateObject(this.value)
 
         // set #period (am or pm) based on date hour
         if (this.timeStamp.getHours() >= 12) {
@@ -371,11 +386,11 @@ export default {
         } else {
           this.period = AM
         }
-  		} catch (e) {
+      } catch (e) {
         this.timeStamp = new Date()
         console.log(e);
-  		}
-  	}
+      }
+    }
 
     this.year = this.timeStamp.getFullYear()
     this.monthIndex = this.timeStamp.getMonth()
@@ -390,32 +405,33 @@ export default {
     });
     document.addEventListener('keydown', this.keyIsDown)
     document.addEventListener('click', this.documentClicked)
-    this.setDate()
+    // this.setDate()
   },
   watch: {
     value (newVal, oldVal) {
       if (newVal) {
         this.value = newVal;
-    		try {
+        try {
           this.timeStamp = this.makeDateObject(this.value)
-          let old = this.makeDateObject(oldVal)
-          if (oldVal === this.timeStamp) {
-            return
-          }
-    		} catch (e) {
+          // let old = this.makeDateObject(oldVal)
+          // if (oldVal === this.timeStamp) {
+          //   return
+          // }
+        } catch (e) {
           console.warn(e.message +'. Current date is being used.')
           this.timeStamp = new Date()
-    		}
-    	}
-      this.year = this.timeStamp.getFullYear()
-      this.monthIndex = this.timeStamp.getMonth()
-      this.day = this.timeStamp.getDate()
-      this.hour = this.timeStamp.getHours()
-      this.hour = this.hour < 10 ? '0' + this.hour : '' + this.hour
-      this.minute = this.timeStamp.getMinutes()
-      this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
-      this.updateCalendar()
-      this.setDate()
+        }
+        this.year = this.timeStamp.getFullYear()
+        this.monthIndex = this.timeStamp.getMonth()
+        this.day = this.timeStamp.getDate()
+        this.hour = this.timeStamp.getHours()
+        this.hour = this.hour < 10 ? '0' + this.hour : '' + this.hour
+        this.minute = this.timeStamp.getMinutes()
+        this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
+        this.updateCalendar()
+        this.setDate()
+      }
+      
     }
   },
   destroyed: function () {
