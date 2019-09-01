@@ -290,16 +290,21 @@ export default {
     toggleCal () {
       this.hideCal = !this.hideCal
     },
-    setDate () {
-      let d = null
+    setPeriodStyle () {
       if (this.dateFormat.indexOf('H') !== -1) {
         this.periodStyle = 24;
         this.period = null;
       } else {
         this.periodStyle = 12;
       }
-      let h = this.hour + ''
+    },
+    setDate () {
+      let d = null
 
+      this.setPeriodStyle()
+
+      let h = this.hour + ''
+      
       if (this.periodStyle === 12) {
         if (h === '12') {
           h = this.period === AM ? '00' : '12'
@@ -406,6 +411,7 @@ export default {
     document.addEventListener('keydown', this.keyIsDown)
     document.addEventListener('click', this.documentClicked)
     // this.setDate()
+    this.setPeriodStyle()
   },
   watch: {
     value (newVal, oldVal) {
@@ -488,11 +494,16 @@ export default {
       let f = 'YYYY-MM-DD h:i:s'
       let allowedFormats = [
         'YYYY-MM-DD h:i:s', 'DD-MM-YYYY h:i:s', 'MM-DD-YYYY h:i:s',
+        'YYYY-MM-DD h:i', 'DD-MM-YYYY h:i', 'MM-DD-YYYY h:i',
         'YYYY-MM-DD H:i:s', 'DD-MM-YYYY H:i:s', 'MM-DD-YYYY H:i:s',
+        'YYYY-MM-DD H:i', 'DD-MM-YYYY H:i', 'MM-DD-YYYY H:i',
         'YYYY-MM-DD', 'DD-MM-YYYY', 'MM-DD-YYYY',
-        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 'h:i:s', 'H:i:s',
+        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 
+        'h:i:s', 'H:i:s', 'h:i', 'H:i',
         'YYYY/MM/DD h:i:s', 'DD/MM/YYYY h:i:s', 'MM/DD/YYYY h:i:s',
-        'YYYY/MM/DD H:i:s', 'DD/MM/YYYY H:i:s', 'MM/DD/YYYY H:i:s'
+        'YYYY/MM/DD h:i', 'DD/MM/YYYY h:i', 'MM/DD/YYYY h:i',
+        'YYYY/MM/DD H:i:s', 'DD/MM/YYYY H:i:s', 'MM/DD/YYYY H:i:s',
+        'YYYY/MM/DD H:i', 'DD/MM/YYYY H:i', 'MM/DD/YYYY H:i'
       ]
       if (this.format) {
         f = this.format
@@ -506,7 +517,10 @@ export default {
       }
     },
     hideTime () {
-      return this.dateFormat.indexOf('h:i:s') === -1 && this.dateFormat.indexOf('H:i:s') === -1
+      return this.dateFormat.indexOf('h:i:s') === -1 
+          && this.dateFormat.indexOf('H:i:s') === -1
+          && this.dateFormat.indexOf('h:i') === -1
+          && this.dateFormat.indexOf('H:i') === -1
     },
     hideDate () {
       return this.dateFormat === 'h:i:s' || this.dateFormat === 'H:i:s'
