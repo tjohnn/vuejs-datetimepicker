@@ -618,9 +618,9 @@ export default {
     color: white;
     padding: 7px 0;
   }
-  .headers>span{
+  /* .headers>span{
 
-  }
+  } */
   .hour-selector, .minute-selector{
     width: 30px;
     display: inline-block;
