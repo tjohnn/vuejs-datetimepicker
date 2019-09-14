@@ -1,7 +1,7 @@
 <template>
   <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)'  v-on:blur='toggleCal' >
     <div>
-      <input type='text' :readonly="readonly" id='tj-datetime-input' :required="required" :value="date"  :name='name' v-on:click='toggleCal'autocomplete='off'  />
+      <input type='text' :readonly="readonly" id='tj-datetime-input' :required="required" :value="date"  :name='name' v-on:click='toggleCal' autocomplete='off'  />
       <div class='calender-div' :class='{noDisplay: hideCal}'>
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
@@ -13,15 +13,15 @@
             <div class='month-setter'>
               <button type='button' class='nav-l' v-on:click='leftMonth'>&#x3C;</button>
               <span class='month'>{{month}}</span>
-              <button type='button' class='nav-r' v-on:click='rightMonth' v-on:mousedown=''>&#x3E;</button>
+              <button type='button' class='nav-r' v-on:click='rightMonth'>&#x3E;</button>
             </div>
           </div>
           <div class='headers'>
-            <span class='days' v-for="port in days">{{port}}</span>
+            <span class='days' v-for="port in days" :key="port">{{port}}</span>
           </div>
           <div>
-            <div class="week" v-for="(week, weekIndex) in weeks">
-              <span class="port" v-for="(day, dayIndex) in week" v-on:click='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort}'>
+            <div class="week" v-for="(week, weekIndex) in weeks" :key="weekIndex">
+              <span class="port" v-for="(day, dayIndex) in week" :key="dayIndex" v-on:click='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort}'>
                 {{day}}
               </span>
             </div>
@@ -32,7 +32,7 @@
             <div v-on:click='showHourSelector' id='j-hour'>{{periodStyle === 12 && hour > 12 ? hour - 12 : hour}}</div>
             <div class='scroll-hider' ref='hourScrollerWrapper' :class='{showSelector: hourSelectorVisible}'>
               <ul ref='hourScroller'>
-                <li v-for="(h, index) in hours" :class='{active: index == hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
+                <li v-for="(h, index) in hours" :key="index" :class='{active: index == hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
               </ul>
             </div>
           </div>
@@ -43,7 +43,7 @@
             <div v-on:click='showMinuteSelector' id='j-minute'>{{minute}}</div>
             <div class='scroll-hider' ref='minuteScrollerWrapper' :class='{showSelector: minuteSelectorVisible}'>
               <ul ref='minuteScroller'>
-                <li v-for="(m, index) in minutes" :class='{active: index == minuteIndex}' v-on:click='setMinute(index, true)'>{{m}}</li>
+                <li v-for="(m, index) in minutes" :key="index" :class='{active: index == minuteIndex}' v-on:click='setMinute(index, true)'>{{m}}</li>
               </ul>
             </div>
           </div>
