@@ -1,7 +1,7 @@
 <template>
   <div :style='{width:width}' class="datetime-picker"  v-on:click='calendarClicked($event)'  v-on:blur='toggleCal' >
     <div>
-      <input type='text' :readonly="readonly" id='tj-datetime-input' :required="required" :value="date"  :name='name' v-on:click='toggleCal'autocomplete='off'  />
+      <input type='text' :readonly="readonly" id='tj-datetime-input' :required="required" :value="date"  :name='name' v-on:click='toggleCal' autocomplete='off'  />
       <div class='calender-div' :class='{noDisplay: hideCal}'>
         <div :class='{noDisplay: hideDate}'>
           <div class='year-month-wrapper'>
@@ -13,15 +13,15 @@
             <div class='month-setter'>
               <button type='button' class='nav-l' v-on:click='leftMonth'>&#x3C;</button>
               <span class='month'>{{month}}</span>
-              <button type='button' class='nav-r' v-on:click='rightMonth' v-on:mousedown=''>&#x3E;</button>
+              <button type='button' class='nav-r' v-on:click='rightMonth'>&#x3E;</button>
             </div>
           </div>
           <div class='headers'>
-            <span class='days' v-for="port in days">{{port}}</span>
+            <span class='days' v-for="port in days" :key="port">{{port}}</span>
           </div>
           <div>
-            <div class="week" v-for="(week, weekIndex) in weeks">
-              <span class="port" v-for="(day, dayIndex) in week" v-on:click='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort}'>
+            <div class="week" v-for="(week, weekIndex) in weeks" :key="weekIndex">
+              <span class="port" v-for="(day, dayIndex) in week" :key="dayIndex" v-on:click='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort}'>
                 {{day}}
               </span>
             </div>
@@ -32,7 +32,7 @@
             <div v-on:click='showHourSelector' id='j-hour'>{{periodStyle === 12 && hour > 12 ? hour - 12 : hour}}</div>
             <div class='scroll-hider' ref='hourScrollerWrapper' :class='{showSelector: hourSelectorVisible}'>
               <ul ref='hourScroller'>
-                <li v-for="(h, index) in hours" :class='{active: index == hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
+                <li v-for="(h, index) in hours" :key="index" :class='{active: index == hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
               </ul>
             </div>
           </div>
@@ -43,7 +43,7 @@
             <div v-on:click='showMinuteSelector' id='j-minute'>{{minute}}</div>
             <div class='scroll-hider' ref='minuteScrollerWrapper' :class='{showSelector: minuteSelectorVisible}'>
               <ul ref='minuteScroller'>
-                <li v-for="(m, index) in minutes" :class='{active: index == minuteIndex}' v-on:click='setMinute(index, true)'>{{m}}</li>
+                <li v-for="(m, index) in minutes" :key="index" :class='{active: index == minuteIndex}' v-on:click='setMinute(index, true)'>{{m}}</li>
               </ul>
             </div>
           </div>
@@ -55,7 +55,7 @@
           </div>
         </div>
         <button type='button' v-on:click='clearDate' class='okButton'>Clear</button>
-        <button type='button' v-on:click='setDate' class='okButton'>OK</button>
+        <button type='button' v-on:click='setDate' class='okButton ok'>OK</button>
       </div>
     </div>
   </div>
@@ -290,16 +290,21 @@ export default {
     toggleCal () {
       this.hideCal = !this.hideCal
     },
-    setDate () {
-      let d = null
+    setPeriodStyle () {
       if (this.dateFormat.indexOf('H') !== -1) {
         this.periodStyle = 24;
         this.period = null;
       } else {
         this.periodStyle = 12;
       }
-      let h = this.hour + ''
+    },
+    setDate () {
+      let d = null
 
+      this.setPeriodStyle()
+
+      let h = this.hour + ''
+      
       if (this.periodStyle === 12) {
         if (h === '12') {
           h = this.period === AM ? '00' : '12'
@@ -406,6 +411,7 @@ export default {
     document.addEventListener('keydown', this.keyIsDown)
     document.addEventListener('click', this.documentClicked)
     // this.setDate()
+    this.setPeriodStyle()
   },
   watch: {
     value (newVal, oldVal) {
@@ -488,11 +494,16 @@ export default {
       let f = 'YYYY-MM-DD h:i:s'
       let allowedFormats = [
         'YYYY-MM-DD h:i:s', 'DD-MM-YYYY h:i:s', 'MM-DD-YYYY h:i:s',
+        'YYYY-MM-DD h:i', 'DD-MM-YYYY h:i', 'MM-DD-YYYY h:i',
         'YYYY-MM-DD H:i:s', 'DD-MM-YYYY H:i:s', 'MM-DD-YYYY H:i:s',
+        'YYYY-MM-DD H:i', 'DD-MM-YYYY H:i', 'MM-DD-YYYY H:i',
         'YYYY-MM-DD', 'DD-MM-YYYY', 'MM-DD-YYYY',
-        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 'h:i:s', 'H:i:s',
+        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 
+        'h:i:s', 'H:i:s', 'h:i', 'H:i',
         'YYYY/MM/DD h:i:s', 'DD/MM/YYYY h:i:s', 'MM/DD/YYYY h:i:s',
-        'YYYY/MM/DD H:i:s', 'DD/MM/YYYY H:i:s', 'MM/DD/YYYY H:i:s'
+        'YYYY/MM/DD h:i', 'DD/MM/YYYY h:i', 'MM/DD/YYYY h:i',
+        'YYYY/MM/DD H:i:s', 'DD/MM/YYYY H:i:s', 'MM/DD/YYYY H:i:s',
+        'YYYY/MM/DD H:i', 'DD/MM/YYYY H:i', 'MM/DD/YYYY H:i'
       ]
       if (this.format) {
         f = this.format
@@ -506,7 +517,10 @@ export default {
       }
     },
     hideTime () {
-      return this.dateFormat.indexOf('h:i:s') === -1 && this.dateFormat.indexOf('H:i:s') === -1
+      return this.dateFormat.indexOf('h:i:s') === -1 
+          && this.dateFormat.indexOf('H:i:s') === -1
+          && this.dateFormat.indexOf('h:i') === -1
+          && this.dateFormat.indexOf('H:i') === -1
     },
     hideDate () {
       return this.dateFormat === 'h:i:s' || this.dateFormat === 'H:i:s'
@@ -604,9 +618,9 @@ export default {
     color: white;
     padding: 7px 0;
   }
-  .headers>span{
+  /* .headers>span{
 
-  }
+  } */
   .hour-selector, .minute-selector{
     width: 30px;
     display: inline-block;

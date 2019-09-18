@@ -32,18 +32,23 @@ export default {
 #### DateTime formats
 ##### 12h (AM/PM)
 `YYYY-MM-DD h:i:s`, `DD-MM-YYYY h:i:s`, `MM-DD-YYYY h:i:s`,
-`YYYY/MM/DD h:i:s`, `DD/MM/YYYY h:i:s` and `MM/DD/YYYY h:i:s`
+`YYYY-MM-DD h:i`, `DD-MM-YYYY h:i`, `MM-DD-YYYY h:i`,
+`YYYY/MM/DD h:i:s`, `DD/MM/YYYY h:i:s`, `MM/DD/YYYY h:i:s`,
+`YYYY/MM/DD h:i`, `DD/MM/YYYY h:i` and `MM/DD/YYYY h:i`
 
 ##### 24h
 `YYYY-MM-DD H:i:s`, `DD-MM-YYYY H:i:s`, `MM-DD-YYYY H:i:s`,
-`YYYY/MM/DD H:i:s`, `DD/MM/YYYY H:i:s` and `MM/DD/YYYY H:i:s`
+`YYYY-MM-DD H:i`, `DD-MM-YYYY H:i`, `MM-DD-YYYY H:i`,
+`YYYY/MM/DD H:i:s`, `DD/MM/YYYY H:i:s`, `MM/DD/YYYY H:i:s`,
+`YYYY/MM/DD H:i`, `DD/MM/YYYY H:i` and `MM/DD/YYYY H:i`
 
 #### Date only formats
 `YYYY-MM-DD`, `DD-MM-YYYY`, `MM-DD-YYYY`,
 `YYYY/MM/DD`, `DD/MM/YYYY` and `MM/DD/YYYY`
 
 #### Time only format
-`h:i:s` (12h) and `H:i:s` (24h)
+`h:i:s` (12h), `H:i:s` (24h),
+`h:i` (12h) and `H:i` (24h)
 
 ### Accepting value of date
 #### The value of picked date can be accepted in 2 ways.

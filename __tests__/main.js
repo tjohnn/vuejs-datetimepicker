@@ -47,7 +47,7 @@ describe('DatetimePicker', () => {
             });
             comp12h.find('input').trigger('click');
             let calendar = comp12h.findAll('.calender-div .minute-selector').wrappers[1].html();
-            expect(calendar).toContain('AM');
+            expect(calendar).toContain('PM');
     
             comp24h.find('input').trigger('click');
             const minuteSelectors = comp24h.findAll('.calender-div .minute-selector');
@@ -81,13 +81,52 @@ describe('DatetimePicker', () => {
             expect(hours.wrappers[23].text()).toBe('23');
 
             hours.wrappers[0].trigger('click');
-            comp24h.find('.okButton').trigger('click');
+            comp24h.find('.ok').trigger('click');
             expect(comp24h.find('input').element.value).toBe('2018-04-07 00:12:00');
 
             comp24h.find('input').trigger('click');
             hours.wrappers[23].trigger('click');
-            comp24h.find('.okButton').trigger('click');
+            comp24h.find('.ok').trigger('click');
             expect(comp24h.find('input').element.value).toBe('2018-04-07 23:12:00');
+        });
+
+        it('should ommit seconds from output if format doesnt have :s field', () => {
+            const comp12h = mount(datetime, {
+                propsData: {
+                    value: testDate,
+                    format: 'YYYY-MM-DD h:i'
+                }
+            });
+            const comp24h = mount(datetime, {
+                propsData: {
+                    value: testDate,
+                    format: 'YYYY-MM-DD H:i'
+                }
+            });
+
+            comp12h.find('input').trigger('click');
+            let hours = comp12h.findAll('.calender-div .hour-selector li');
+            hours.wrappers[0].trigger('click');
+            comp12h.find('.ok').trigger('click');
+            expect(comp12h.find('input').element.value).toBe('2018-04-07 13:12');
+
+            comp12h.find('input[type="text"]').trigger('click');
+            hours.wrappers[10].trigger('click');
+            comp12h.find('.ok').trigger('click');
+            expect(comp12h.find('input[type="text"]').element.value).toBe('2018-04-07 23:12');
+
+
+            comp24h.find('input').trigger('click');
+            hours = comp24h.findAll('.calender-div .hour-selector li');
+
+            hours.wrappers[0].trigger('click');
+            comp24h.find('.ok').trigger('click');
+            expect(comp24h.find('input').element.value).toBe('2018-04-07 00:12');
+
+            comp24h.find('input[type="text"]').trigger('click');
+            hours.wrappers[23].trigger('click');
+            comp24h.find('.ok').trigger('click');
+            expect(comp24h.find('input[type="text"]').element.value).toBe('2018-04-07 23:12');
         });
     });
 });
