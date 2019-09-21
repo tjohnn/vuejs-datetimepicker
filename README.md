@@ -1,4 +1,4 @@
-# datetimepicker component for Vue.js
+# Datetimepicker component for Vue.js
 
 ## Requirements
 
@@ -12,7 +12,7 @@ $ npm install vuejs-datetimepicker
 ```
 
 ## Demo
-https://codesandbox.io/s/rw3l109yzo
+https://jx7cx.csb.app/
 
 ## Usage
 ``` html

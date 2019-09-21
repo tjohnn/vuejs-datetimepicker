@@ -32,7 +32,7 @@
             <div v-on:click='showHourSelector' id='j-hour'>{{periodStyle === 12 && hour > 12 ? hour - 12 : hour}}</div>
             <div class='scroll-hider' ref='hourScrollerWrapper' :class='{showSelector: hourSelectorVisible}'>
               <ul ref='hourScroller'>
-                <li v-for="(h, index) in hours" :key="index" :class='{active: index == hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
+                <li v-for="(h, index) in hours" :key="index" :class='{active: index === hourIndex}' v-on:click='setHour(index, true)' >{{h}}</li>
               </ul>
             </div>
           </div>
@@ -43,7 +43,7 @@
             <div v-on:click='showMinuteSelector' id='j-minute'>{{minute}}</div>
             <div class='scroll-hider' ref='minuteScrollerWrapper' :class='{showSelector: minuteSelectorVisible}'>
               <ul ref='minuteScroller'>
-                <li v-for="(m, index) in minutes" :key="index" :class='{active: index == minuteIndex}' v-on:click='setMinute(index, true)'>{{m}}</li>
+                <li v-for="(m, index) in minutes" :key="index" :class='{active: index === minuteIndex}' v-on:click='setMinute(index, true)'>{{m}}</li>
               </ul>
             </div>
           </div>
@@ -304,7 +304,7 @@ export default {
       this.setPeriodStyle()
 
       let h = this.hour + ''
-      
+
       if (this.periodStyle === 12) {
         if (h === '12') {
           h = this.period === AM ? '00' : '12'
@@ -361,15 +361,19 @@ export default {
       let date = new Date();
       if(this.hideDate){
         // time only
-        var splitTime = dateAndTime[0].split(':')
-        date.setHours(parseInt(splitTime[0]), parseInt(splitTime[1]), parseInt(splitTime[2]), 0)
+        let splitTime = dateAndTime[0].split(':')
+        // handle date format without seconds
+        let secs = splitTime.length > 2 ? parseInt(splitTime[2]) : 0
+        date.setHours(parseInt(splitTime[0]), parseInt(splitTime[1]), secs, 0)
       } else if (this.hideTime) {
         // date only
         date = new Date(parseInt(year), parseInt(month)-1, parseInt(day))
       } else {
         // we have both date and time
-        var splitTime = dateAndTime[1].split(':')
-        date = new Date(parseInt(year), parseInt(month)-1, parseInt(day), parseInt(splitTime[0]), parseInt(splitTime[1]), parseInt(splitTime[2]))
+        let splitTime = dateAndTime[1].split(':')
+        // handle date format without seconds
+        let secs = splitTime.length > 2 ? parseInt(splitTime[2]) : 0
+        date = new Date(parseInt(year), parseInt(month)-1, parseInt(day), parseInt(splitTime[0]), parseInt(splitTime[1]), secs)
       }
 
       return date
@@ -419,10 +423,6 @@ export default {
         this.value = newVal;
         try {
           this.timeStamp = this.makeDateObject(this.value)
-          // let old = this.makeDateObject(oldVal)
-          // if (oldVal === this.timeStamp) {
-          //   return
-          // }
         } catch (e) {
           console.warn(e.message +'. Current date is being used.')
           this.timeStamp = new Date()
@@ -437,7 +437,7 @@ export default {
         this.updateCalendar()
         this.setDate()
       }
-      
+
     }
   },
   destroyed: function () {
@@ -498,7 +498,7 @@ export default {
         'YYYY-MM-DD H:i:s', 'DD-MM-YYYY H:i:s', 'MM-DD-YYYY H:i:s',
         'YYYY-MM-DD H:i', 'DD-MM-YYYY H:i', 'MM-DD-YYYY H:i',
         'YYYY-MM-DD', 'DD-MM-YYYY', 'MM-DD-YYYY',
-        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 
+        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY',
         'h:i:s', 'H:i:s', 'h:i', 'H:i',
         'YYYY/MM/DD h:i:s', 'DD/MM/YYYY h:i:s', 'MM/DD/YYYY h:i:s',
         'YYYY/MM/DD h:i', 'DD/MM/YYYY h:i', 'MM/DD/YYYY h:i',
@@ -517,13 +517,14 @@ export default {
       }
     },
     hideTime () {
-      return this.dateFormat.indexOf('h:i:s') === -1 
+      return this.dateFormat.indexOf('h:i:s') === -1
           && this.dateFormat.indexOf('H:i:s') === -1
           && this.dateFormat.indexOf('h:i') === -1
           && this.dateFormat.indexOf('H:i') === -1
     },
     hideDate () {
       return this.dateFormat === 'h:i:s' || this.dateFormat === 'H:i:s'
+        || this.dateFormat === 'h:i' || this.dateFormat === 'H:i'
     }
   }
 }
